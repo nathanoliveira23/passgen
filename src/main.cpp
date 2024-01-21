@@ -12,11 +12,11 @@ int main(int argc, char* argv[])
 
             try {
                 int len = std::stoi(argv[2]);
-                passwordToGenerate = generate(len);
+                passwordToGenerate = generate_random_passwd(len);
             }
             catch (const std::invalid_argument& e) {
                 std::string input = argv[2];
-                passwordToGenerate = generate_v2(input);
+                passwordToGenerate = generate_scrambled_passwd(input);
             }
             
             std::cout << passwordToGenerate << "\n";

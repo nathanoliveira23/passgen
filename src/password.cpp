@@ -1,7 +1,7 @@
 #include "../includes/password.hpp"
 #include "../includes/random.hpp"
 
-std::string generate(std::uint32_t len)
+std::string generate_random_passwd(std::uint32_t len)
 {
     std::string password;
 
@@ -13,7 +13,7 @@ std::string generate(std::uint32_t len)
     return password;    
 }
 
-std::string generate_v2(std::string& str)
+std::string generate_scrambled_passwd(std::string& str)
 {
     std::string newPassword;
     std::size_t rand = randInt(1, 5);

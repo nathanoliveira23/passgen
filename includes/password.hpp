@@ -48,5 +48,5 @@ static std::unordered_map<char, std::vector<char>> correspondence = {
 };
 
 
-std::string generate(std::uint32_t);
-std::string generate_v2(std::string&);
+std::string generate_random_passwd(std::uint32_t);
+std::string generate_scrambled_passwd(std::string&);
