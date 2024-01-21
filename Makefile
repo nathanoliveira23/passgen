@@ -15,6 +15,8 @@ all: $(PROGRAM)
 $(PROGRAM): $(OBJS)
 	$(CXX) -o $(PROGRAM) $(OBJS) $(FLAGS)
 
+dev:
+	$(CXX) $(C_SOURCES) $(FLAGS) -o $(PROGRAM)
 
 main.o: src/main.cpp
 	$(CXX) -c $(FLAGS) src/main.cpp -o main.o

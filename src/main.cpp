@@ -6,13 +6,12 @@
 
 int main(int argc, char* argv[])
 {
-    if (argc > 0) {
+    if (argc > 1) {
         if (!strcmp(argv[1], "-g") || !strcmp(argv[1], "--generate")) {
-            std::string length, passwordToGenerate;
+            std::string passwordToGenerate;
 
             try {
                 int len = std::stoi(argv[2]);
-
                 passwordToGenerate = generate(len);
             }
             catch (const std::invalid_argument& e) {
@@ -21,6 +20,9 @@ int main(int argc, char* argv[])
             }
             
             std::cout << passwordToGenerate << "\n";
+        }
+        else {
+            return 1;
         }
     }
 

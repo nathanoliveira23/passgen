@@ -26,8 +26,10 @@ std::string generate_v2(std::string& str)
     for (std::size_t i = 0; i < str.size(); ++i) {
         char toChange = str[i];
 
-        if (correspondence.count(toChange))
-            str[i] = correspondence[toChange];
+        if (correspondence.count(toChange)) {
+            std::size_t pos = randInt(0, correspondence[toChange].size() - 1);
+            str[i] = correspondence[toChange].at(pos);
+        }
     }
 
     newPassword += str;

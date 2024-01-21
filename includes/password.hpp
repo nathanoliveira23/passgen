@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdint>
 #include <array>
+#include <vector>
 #include <unordered_map>
 
 #define SIZE 67
@@ -17,11 +18,33 @@ static const std::array<char, SIZE> chars = {
     'y', 'z', '@', '#', '$', '%', '&'
 };
 
-static std::unordered_map<char, char> correspondence = {
-    {'a', '@'},
-    {'e', '&'},
-    {'i', '1'},
-    {'o', '0'},
+static std::unordered_map<char, std::vector<char>> correspondence = {
+    { 'a', { 'A', 'a', '@', '4' } },
+    { 'b', { 'B', 'b', '6' } },
+    { 'c', { 'C', 'c' } },
+    { 'd', { 'D', 'd' } },
+    { 'e', { 'E', 'e', '&', '3' } },
+    { 'f', { 'F', 'f' } },
+    { 'g', { 'G', 'g', '&', '9' } },
+    { 'h', { 'H', 'h', '#' } },
+    { 'i', { 'I', 'i', '1' } },
+    { 'j', { 'J', 'j' } },
+    { 'k', { 'K', 'k' } },
+    { 'l', { 'L', 'l', '1' } },
+    { 'm', { 'M', 'm' } },
+    { 'n', { 'N', 'n' } },
+    { 'o', { 'O', 'o', '0' } },
+    { 'p', { 'P', 'p' } },
+    { 'q', { 'Q', 'q', '9' } },
+    { 'r', { 'R', 'r' } },
+    { 's', { 'S', 's', '$', '5' } },
+    { 't', { 'T', 't', '7' } },
+    { 'u', { 'U', 'u' } },
+    { 'v', { 'V', 'v' } },
+    { 'w', { 'W', 'w' } },
+    { 'x', { 'X', 'x' } },
+    { 'y', { 'Y', 'y', '7' } },
+    { 'z', { 'Z', 'z', '2' } }
 };
 
 
