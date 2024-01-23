@@ -47,6 +47,5 @@ static std::unordered_map<char, std::vector<char>> correspondence = {
     { 'z', { 'Z', 'z', '2' } }
 };
 
-
 std::string generate_random_passwd(std::uint32_t);
 std::string generate_scrambled_passwd(std::string&);

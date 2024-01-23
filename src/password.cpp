@@ -1,5 +1,19 @@
 #include "../includes/password.hpp"
 #include "../includes/random.hpp"
+#include <cstddef>
+
+static std::string generate_random_str()
+{
+    std::string random_str;
+    std::size_t rand = randInt(0, 5);
+
+    for (std::size_t i = 0; i < rand; ++i) {
+        std::size_t random_pos = randInt(0, SIZE - 1);
+        random_str.push_back(chars[random_pos]);
+    }
+
+    return random_str;
+}
 
 std::string generate_random_passwd(std::uint32_t len)
 {
@@ -16,12 +30,8 @@ std::string generate_random_passwd(std::uint32_t len)
 std::string generate_scrambled_passwd(std::string& str)
 {
     std::string newPassword;
-    std::size_t rand = randInt(1, 5);
 
-    for (std::size_t i = 0; i < rand; ++i) {
-        std::size_t pos = randInt(0, SIZE - 1);
-        newPassword.push_back(chars[pos]);
-    }
+    newPassword.append(generate_random_str());
 
     for (std::size_t i = 0; i < str.size(); ++i) {
         char toChange = str[i];
@@ -32,14 +42,8 @@ std::string generate_scrambled_passwd(std::string& str)
         }
     }
 
-    newPassword += str;
-
-    rand = randInt(1, 5);
-
-    for (std::size_t i = 0; i < rand; ++i) {
-        std::size_t pos = randInt(0, SIZE - 1);
-        newPassword.push_back(chars[pos]);
-    }
+    newPassword.append(str)
+               .append(generate_random_str());
 
     return newPassword;
 }
