@@ -4,7 +4,7 @@ CXX = g++
 
 C_SOURCES = $(PWD)/src/*.cpp
 
-FLAGS = -g -Wall -pedantic
+FLAGS = -std=c++17 -g -Wall -pedantic -lssl -lcrypto
 
 INCLUDE_PATH = -I$(PWD)/inludes
 
