@@ -31,4 +31,4 @@ install:
 	@install $(PROGRAM) /usr/local/bin/$(PROGRAM)
 
 clean:
-	rm -rf *.o $(PROGRAM)
+	rm -rf *.o *.txt *.txt.enc *.key $(PROGRAM)
