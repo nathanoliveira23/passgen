@@ -18,17 +18,25 @@ inline static void encdec_error(const std::string& error)
 
 bool generate_private_Key()
 {
-    const char* command = "openssl rand -out secret.key 256";
-    int success = std::system(command);
+    byte key[EVP_MAX_KEY_LENGTH];
+    int success = RAND_bytes(key, EVP_MAX_KEY_LENGTH);
 
-    if (success == 0) {
-        std::cout << "Chave gerada com sucesso.\n";
-        return true;
-    }
-    else {
-        std::cerr << "Falha ao gerar chave.\n";
+    if (success != 1) {
+        encdec_error("Failed to generate private Key.\n");
         return false;
     }
+
+    std::ofstream secKeyFile("secret.key", std::ios::binary);
+
+    if (!secKeyFile.is_open()) {
+        std::cerr << "Failed to create private key file.\n";
+        return false;
+    }
+
+    secKeyFile.write(reinterpret_cast<char*>(key), EVP_MAX_KEY_LENGTH);
+    secKeyFile.close();
+    
+    return true;
 }
 
 void AES256_encrypt_file(const std::string &input_file)
