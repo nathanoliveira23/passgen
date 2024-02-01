@@ -6,7 +6,7 @@
 #include "../includes/password.hpp"
 #include "../includes/AES256.hpp"
 
-inline bool exists_file(const std::string &filename)
+static inline bool exists_file(const std::string &filename)
 {
     bool exists;
     std::ifstream encripted_file(filename);
@@ -17,11 +17,11 @@ inline bool exists_file(const std::string &filename)
     return exists;
 }
 
-static inline void encrypt(const std::string filename)
+static inline void encrypt(const std::string filename, const std::string passphrase)
 {
     try {
         if (!exists_file("passwords.txt.enc")) {
-            bool generated = generate_private_Key();
+            bool generated = generate_private_Key(passphrase);
 
             if (!generated) return;
         }
@@ -53,6 +53,8 @@ std::string generate_password(const std::string &arg)
 
 void add_credential(const std::string &platform, const std::string &username, const std::string &password)
 {
+    std::string userPassphrase;
+
     try {
         std::ofstream passwdDB(tempFile, std::ios::app);
 
@@ -62,14 +64,22 @@ void add_credential(const std::string &platform, const std::string &username, co
         }
 
         if (exists_file("passwords.txt.enc")) {
-            AES256_decrypt_file("passwords.txt.enc");
+            std::cout << "Your passphrase: ";
+            std::cin >> userPassphrase;
+
+            AES256_decrypt_file("passwords.txt.enc", userPassphrase);
+        }
+        else {
+            std::cout << "Enter a new passphrase: ";
+            std::cin >> userPassphrase;
         }
 
         passwdDB << platform << ":" << username << ":" << password << "\n";
 
         passwdDB.close();
 
-        encrypt(tempFile);
+
+        encrypt(tempFile, userPassphrase);
     }
     catch (const std::exception& err) {
         std::cerr << err.what();
@@ -78,8 +88,13 @@ void add_credential(const std::string &platform, const std::string &username, co
 
 void show_credentials()
 {
+    std::string userPassphrase;
+
+    std::cout << "Your passphrase: ";
+    std::cin >> userPassphrase;
+
     try {
-        AES256_decrypt_file("passwords.txt.enc");
+        AES256_decrypt_file("passwords.txt.enc", userPassphrase);
 
         std::ifstream passwdDB(tempFile);
         std::string credential;

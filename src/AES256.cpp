@@ -3,12 +3,15 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <openssl/sha.h>
 #include <sstream>
 #include <array>
 #include <iomanip>
 #include <openssl/rand.h>
 #include <openssl/evp.h>
+#include "../includes/types.h"
 #include "../includes/AES256.hpp"
+#include "../includes/SHA256.hpp"
 
 inline static void encdec_error(const std::string& error)
 {
@@ -16,10 +19,11 @@ inline static void encdec_error(const std::string& error)
     std::abort();
 }
 
-bool generate_private_Key()
+bool generate_private_Key(const std::string &userPassword)
 {
     byte key[EVP_MAX_KEY_LENGTH];
     int success = RAND_bytes(key, EVP_MAX_KEY_LENGTH);
+    std::array<byte, SHA256_DIGEST_LENGTH> hashPassword = generate_sha256(userPassword);
 
     if (success != 1) {
         encdec_error("Failed to generate private Key.\n");
@@ -33,6 +37,7 @@ bool generate_private_Key()
         return false;
     }
 
+    secKeyFile.write(reinterpret_cast<char*>(hashPassword.data()), SHA256_DIGEST_LENGTH);
     secKeyFile.write(reinterpret_cast<char*>(key), EVP_MAX_KEY_LENGTH);
     secKeyFile.close();
     
@@ -48,6 +53,7 @@ void AES256_encrypt_file(const std::string &input_file)
 
     std::ifstream pkfile("secret.key", std::ios::binary);
 
+    pkfile.seekg(32, std::ios::beg);
     pkfile.read(reinterpret_cast<char*>(pkey), EVP_MAX_KEY_LENGTH);
 
     EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
@@ -98,7 +104,7 @@ void AES256_encrypt_file(const std::string &input_file)
     pkfile.close();
 }
 
-void AES256_decrypt_file(const std::string &encrypted_file) 
+void AES256_decrypt_file(const std::string &encrypted_file, const std::string &userPassphrase) 
 {
     OpenSSL_add_all_algorithms();
 
@@ -107,8 +113,19 @@ void AES256_decrypt_file(const std::string &encrypted_file)
 
     byte iv[EVP_MAX_IV_LENGTH];
     byte pkey[EVP_MAX_KEY_LENGTH];
+    std::array<byte, SHA256_DIGEST_LENGTH> hashPassphrase;
 
     infile.read(reinterpret_cast<char*>(iv), EVP_MAX_IV_LENGTH);
+
+    pkfile.read(reinterpret_cast<char*>(hashPassphrase.data()), SHA256_DIGEST_LENGTH);
+
+    bool isMatch = sha256_match(userPassphrase, hashPassphrase);
+
+    if (!isMatch) {
+        std::cerr << "The passphrase is wrong.\n";
+        return;
+    }
+
     pkfile.read(reinterpret_cast<char*>(pkey), EVP_MAX_KEY_LENGTH);
 
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
@@ -144,7 +161,7 @@ void AES256_decrypt_file(const std::string &encrypted_file)
     }
     
     if (EVP_DecryptFinal(ctx, outbuf, &bytes_written) != 1) {
-        encdec_error("Failed to decrypt file.\n");
+        encdec_error("Failed to decrypt file 2.\n");
         EVP_CIPHER_CTX_free(ctx);
     }
     
