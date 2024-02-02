@@ -1,5 +1,8 @@
 #include <iomanip>
 #include <sstream>
+#include <cstdio>
+#include <array>
+#include <string>
 #include "../includes/utils.hpp"
 
 std::vector<std::string> Ultil::split(const std::string& str, char delimiter)
@@ -28,3 +31,4 @@ std::string Ultil::tobase64(byte bincode[], std::size_t len)
 
     return base64.str();
 }
+

@@ -9,9 +9,10 @@
 #include <iomanip>
 #include <openssl/rand.h>
 #include <openssl/evp.h>
-#include "../includes/types.h"
+#include "../includes/types.hpp"
 #include "../includes/AES256.hpp"
 #include "../includes/SHA256.hpp"
+#include "../includes/filepath.hpp"
 
 inline static void encdec_error(const std::string& error)
 {
@@ -30,7 +31,7 @@ bool generate_private_Key(const std::string &userPassword)
         return false;
     }
 
-    std::ofstream secKeyFile("secret.key", std::ios::binary);
+    std::ofstream secKeyFile(SECKEYFILE, std::ios::binary);
 
     if (!secKeyFile.is_open()) {
         std::cerr << "Failed to create private key file.\n";
@@ -51,7 +52,7 @@ void AES256_encrypt_file(const std::string &input_file)
     byte iv[EVP_MAX_IV_LENGTH];
     byte pkey[EVP_MAX_KEY_LENGTH];
 
-    std::ifstream pkfile("secret.key", std::ios::binary);
+    std::ifstream pkfile(SECKEYFILE, std::ios::binary);
 
     pkfile.seekg(32, std::ios::beg);
     pkfile.read(reinterpret_cast<char*>(pkey), EVP_MAX_KEY_LENGTH);
@@ -75,7 +76,7 @@ void AES256_encrypt_file(const std::string &input_file)
     }
 
     std::ifstream to_encrypt_file(input_file, std::ios::binary);
-    std::ofstream encrypted_file("passwords.txt.enc", std::ios::binary);
+    std::ofstream encrypted_file(ENCFILE, std::ios::binary);
 
     encrypted_file.write(reinterpret_cast<char*>(iv), EVP_MAX_IV_LENGTH);
 
@@ -109,7 +110,7 @@ void AES256_decrypt_file(const std::string &encrypted_file, const std::string &u
     OpenSSL_add_all_algorithms();
 
     std::ifstream infile(encrypted_file, std::ios::binary);
-    std::ifstream pkfile("secret.key", std::ios::binary);
+    std::ifstream pkfile(SECKEYFILE, std::ios::binary);
 
     byte iv[EVP_MAX_IV_LENGTH];
     byte pkey[EVP_MAX_KEY_LENGTH];
@@ -146,7 +147,7 @@ void AES256_decrypt_file(const std::string &encrypted_file, const std::string &u
         EVP_CIPHER_CTX_free(ctx);
     }
 
-    std::ofstream outfile("passwords.txt", std::ios::binary);
+    std::ofstream outfile(TEMPFILE, std::ios::binary);
 
     byte inbuf[1024], outbuf[1024 + EVP_MAX_BLOCK_LENGTH];
     int bytes_read, bytes_written;
@@ -161,7 +162,7 @@ void AES256_decrypt_file(const std::string &encrypted_file, const std::string &u
     }
     
     if (EVP_DecryptFinal(ctx, outbuf, &bytes_written) != 1) {
-        encdec_error("Failed to decrypt file 2.\n");
+        encdec_error("Failed to decrypt file.\n");
         EVP_CIPHER_CTX_free(ctx);
     }
     

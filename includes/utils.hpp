@@ -1,9 +1,10 @@
 #pragma once
 
+#include <array>
 #include <vector>
 #include <string>
 #include <cstddef>
-#include "types.h"
+#include "types.hpp"
 
 namespace Ultil {
     std::vector<std::string> split(const std::string&, char);

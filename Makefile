@@ -31,4 +31,4 @@ install:
 	@install $(PROGRAM) /usr/local/bin/$(PROGRAM)
 
 clean:
-	rm -rf *.o *.txt *.txt.enc *.key $(PROGRAM)
+	rm -rf *.o /tmp/passgenDB.txt ~/passgenDB.txt.enc ~/secret.key $(PROGRAM)
