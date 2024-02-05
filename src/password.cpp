@@ -30,8 +30,10 @@ std::string generate_random_passwd(std::uint32_t len)
 std::string generate_scrambled_passwd(std::string& str)
 {
     std::string newPassword;
+    std::string prefix, suffix;
 
-    newPassword.append(generate_random_str());
+    prefix = generate_random_str();
+    suffix = generate_random_str();
 
     for (std::size_t i = 0; i < str.size(); ++i) {
         char toChange = str[i];
@@ -42,8 +44,10 @@ std::string generate_scrambled_passwd(std::string& str)
         }
     }
 
-    newPassword.append(str)
-               .append(generate_random_str());
+
+    newPassword.append(prefix)
+               .append(str)
+               .append(suffix);
 
     return newPassword;
 }
