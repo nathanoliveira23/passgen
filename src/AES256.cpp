@@ -9,10 +9,7 @@
 #include <iomanip>
 #include <openssl/rand.h>
 #include <openssl/evp.h>
-#include "../includes/types.hpp"
-#include "../includes/AES256.hpp"
-#include "../includes/SHA256.hpp"
-#include "../includes/filepath.hpp"
+#include "../includes/Encdec.hpp"
 
 inline static void encdec_error(const std::string& error)
 {
@@ -20,11 +17,11 @@ inline static void encdec_error(const std::string& error)
     std::abort();
 }
 
-bool generate_private_Key(const std::string &userPassword)
+bool Encdec::AES256::generate_private_Key(const std::string &userPassword)
 {
     byte key[EVP_MAX_KEY_LENGTH];
     int success = RAND_bytes(key, EVP_MAX_KEY_LENGTH);
-    std::array<byte, SHA256_DIGEST_LENGTH> hashPassword = generate_sha256(userPassword);
+    std::array<byte, SHA256_DIGEST_LENGTH> hashPassword = Encdec::SHA256::generate_sha256(userPassword);
 
     if (success != 1) {
         encdec_error("Failed to generate private Key.\n");
@@ -45,7 +42,7 @@ bool generate_private_Key(const std::string &userPassword)
     return true;
 }
 
-void AES256_encrypt_file(const std::string &input_file)
+void Encdec::AES256::AES256_encrypt_file(const std::string &input_file)
 {
     OpenSSL_add_all_algorithms();
 
@@ -105,7 +102,7 @@ void AES256_encrypt_file(const std::string &input_file)
     pkfile.close();
 }
 
-void AES256_decrypt_file(const std::string &encrypted_file, const std::string &userPassphrase) 
+void Encdec::AES256::AES256_decrypt_file(const std::string &encrypted_file, const std::string &userPassphrase) 
 {
     OpenSSL_add_all_algorithms();
 
@@ -120,7 +117,7 @@ void AES256_decrypt_file(const std::string &encrypted_file, const std::string &u
 
     pkfile.read(reinterpret_cast<char*>(hashPassphrase.data()), SHA256_DIGEST_LENGTH);
 
-    bool isMatch = sha256_match(userPassphrase, hashPassphrase);
+    bool isMatch = Encdec::SHA256::sha256_match(userPassphrase, hashPassphrase);
 
     if (!isMatch) {
         std::cerr << "The passphrase is wrong.\n";

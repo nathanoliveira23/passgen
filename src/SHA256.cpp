@@ -5,9 +5,9 @@
 #include <sstream>
 #include <iomanip>
 #include <openssl/sha.h>
-#include "../includes/SHA256.hpp"
+#include "../includes/Encdec.hpp"
 
-std::array<byte, SHA256_DIGEST_LENGTH> generate_sha256(const std::string& passwd)
+std::array<byte, SHA256_DIGEST_LENGTH> Encdec::SHA256::generate_sha256(const std::string& passwd)
 {
     std::array<byte, SHA256_DIGEST_LENGTH> hash;
 
@@ -19,7 +19,7 @@ std::array<byte, SHA256_DIGEST_LENGTH> generate_sha256(const std::string& passwd
     return hash;
 }
 
-bool sha256_match(const std::string& passwd, std::array<byte, SHA256_DIGEST_LENGTH> hashpasswd)
+bool Encdec::SHA256::sha256_match(const std::string& passwd, std::array<byte, SHA256_DIGEST_LENGTH> hashpasswd)
 {
     std::array<byte, SHA256_DIGEST_LENGTH> hash = generate_sha256(passwd);
 

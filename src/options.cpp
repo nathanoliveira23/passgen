@@ -1,11 +1,11 @@
-#include <array>
 #include <iostream>
+#include <vector>
 #include <cstdio>
 #include <stdexcept>
 #include <fstream>
 #include "../includes/options.hpp"
 #include "../includes/password.hpp"
-#include "../includes/AES256.hpp"
+#include "../includes/Encdec.hpp"
 #include "../includes/utils.hpp"
 #include "../includes/filepath.hpp"
 #include "../includes/table.hpp"
@@ -25,12 +25,12 @@ static inline void encrypt(const std::string filename, const std::string passphr
 {
     try {
         if (!exists_file(ENCFILE)) {
-            bool generated = generate_private_Key(passphrase);
+            bool generated = Encdec::AES256::generate_private_Key(passphrase);
 
             if (!generated) return;
         }
 
-        AES256_encrypt_file(filename);
+        Encdec::AES256::AES256_encrypt_file(filename);
         std::remove(filename.c_str());
 
     }
@@ -71,7 +71,7 @@ void add_credential(const std::string &platform, const std::string &username, co
             std::cout << "Your passphrase: ";
             std::cin >> userPassphrase;
 
-            AES256_decrypt_file(ENCFILE, userPassphrase);
+            Encdec::AES256::AES256_decrypt_file(ENCFILE, userPassphrase);
         }
         else {
             std::cout << "Enter a new passphrase: ";
@@ -97,7 +97,7 @@ void show_credentials()
     std::cin >> userPassphrase;
 
     try {
-        AES256_decrypt_file(ENCFILE, userPassphrase);
+        Encdec::AES256::AES256_decrypt_file(ENCFILE, userPassphrase);
 
         std::ifstream passwdDB(TEMPFILE);
         std::string credential;

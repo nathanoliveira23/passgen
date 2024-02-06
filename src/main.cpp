@@ -9,10 +9,6 @@
 #include <ios>
 #include <fstream>
 
-#include "../includes/password.hpp"
-#include "../includes/SHA256.hpp"
-#include "../includes/AES256.hpp"
-#include "../includes/utils.hpp"
 #include "../includes/options.hpp"
 
 int main(int argc, char* argv[])
