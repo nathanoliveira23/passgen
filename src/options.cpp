@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <stdexcept>
 #include <fstream>
+
 #include "../includes/options.hpp"
 #include "../includes/password.hpp"
 #include "../includes/Encdec.hpp"
@@ -25,12 +26,14 @@ static inline void encrypt(const std::string filename, const std::string passphr
 {
     try {
         if (!exists_file(ENCFILE)) {
-            bool generated = Encdec::AES256::generate_private_Key(passphrase);
+            bool generated = EncDec::AES256::generate_private_Key(passphrase);
 
             if (!generated) return;
         }
 
-        Encdec::AES256::AES256_encrypt_file(filename);
+        EncDec::AES256 encrypt = EncDec::AES256(filename);
+        encrypt.encrypt_file();
+
         std::remove(filename.c_str());
 
     }
@@ -42,14 +45,15 @@ static inline void encrypt(const std::string filename, const std::string passphr
 std::string generate_password(const std::string &arg)
 {
     std::string password;
+    Password gen_passwd;
 
     try {
         int len = std::stoi(arg);
-        password = generate_random_passwd(len);
+        password = gen_passwd.generate_random_passwd(len);
     }
     catch (const std::invalid_argument& e) {
         std::string input = arg;
-        password = generate_scrambled_passwd(input);
+        password = gen_passwd.generate_scrambled_passwd(input);
     }
 
     return password;
@@ -71,7 +75,8 @@ void add_credential(const std::string &platform, const std::string &username, co
             std::cout << "Your passphrase: ";
             std::cin >> userPassphrase;
 
-            Encdec::AES256::AES256_decrypt_file(ENCFILE, userPassphrase);
+            EncDec::AES256 decrypt = EncDec::AES256(ENCFILE);
+            decrypt.decrypt_file(userPassphrase);
         }
         else {
             std::cout << "Enter a new passphrase: ";
@@ -97,7 +102,8 @@ void show_credentials()
     std::cin >> userPassphrase;
 
     try {
-        Encdec::AES256::AES256_decrypt_file(ENCFILE, userPassphrase);
+        EncDec::AES256 decrypt = EncDec::AES256(ENCFILE);
+        decrypt.decrypt_file(userPassphrase);
 
         std::ifstream passwdDB(TEMPFILE);
         std::string credential;

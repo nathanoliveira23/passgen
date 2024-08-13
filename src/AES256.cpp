@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <openssl/rand.h>
 #include <openssl/evp.h>
+
 #include "../includes/Encdec.hpp"
 
 inline static void encdec_error(const std::string& error)
@@ -17,11 +18,11 @@ inline static void encdec_error(const std::string& error)
     std::abort();
 }
 
-bool Encdec::AES256::generate_private_Key(const std::string &userPassword)
+bool EncDec::AES256::generate_private_Key(const std::string &userPassword)
 {
     byte key[EVP_MAX_KEY_LENGTH];
     int success = RAND_bytes(key, EVP_MAX_KEY_LENGTH);
-    std::array<byte, SHA256_DIGEST_LENGTH> hashPassword = Encdec::SHA256::generate_sha256(userPassword);
+    std::array<byte, SHA256_DIGEST_LENGTH> hashPassword = EncDec::SHA256::generate_sha256(userPassword);
 
     if (success != 1) {
         encdec_error("Failed to generate private Key.\n");
@@ -42,7 +43,7 @@ bool Encdec::AES256::generate_private_Key(const std::string &userPassword)
     return true;
 }
 
-void Encdec::AES256::AES256_encrypt_file(const std::string &input_file)
+void EncDec::AES256::encrypt_file()
 {
     OpenSSL_add_all_algorithms();
 
@@ -72,7 +73,7 @@ void Encdec::AES256::AES256_encrypt_file(const std::string &input_file)
         EVP_CIPHER_CTX_free(ctx);
     }
 
-    std::ifstream to_encrypt_file(input_file, std::ios::binary);
+    std::ifstream to_encrypt_file(m_filepath, std::ios::binary);
     std::ofstream encrypted_file(ENCFILE, std::ios::binary);
 
     encrypted_file.write(reinterpret_cast<char*>(iv), EVP_MAX_IV_LENGTH);
@@ -102,11 +103,11 @@ void Encdec::AES256::AES256_encrypt_file(const std::string &input_file)
     pkfile.close();
 }
 
-void Encdec::AES256::AES256_decrypt_file(const std::string &encrypted_file, const std::string &userPassphrase) 
+void EncDec::AES256::decrypt_file(const std::string &userPassphrase) 
 {
     OpenSSL_add_all_algorithms();
 
-    std::ifstream infile(encrypted_file, std::ios::binary);
+    std::ifstream infile(m_filepath, std::ios::binary);
     std::ifstream pkfile(SECKEYFILE, std::ios::binary);
 
     byte iv[EVP_MAX_IV_LENGTH];
@@ -117,7 +118,7 @@ void Encdec::AES256::AES256_decrypt_file(const std::string &encrypted_file, cons
 
     pkfile.read(reinterpret_cast<char*>(hashPassphrase.data()), SHA256_DIGEST_LENGTH);
 
-    bool isMatch = Encdec::SHA256::sha256_match(userPassphrase, hashPassphrase);
+    bool isMatch = EncDec::SHA256::sha256_match(userPassphrase, hashPassphrase);
 
     if (!isMatch) {
         std::cerr << "The passphrase is wrong.\n";

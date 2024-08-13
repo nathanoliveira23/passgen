@@ -2,12 +2,13 @@
 #define OPENSSL_NO_DEPRECATED 1
 
 #include <cstddef>
-#include <sstream>
-#include <iomanip>
 #include <openssl/sha.h>
+
 #include "../includes/Encdec.hpp"
 
-std::array<byte, SHA256_DIGEST_LENGTH> Encdec::SHA256::generate_sha256(const std::string& passwd)
+namespace EncDec {
+
+std::array<byte, SHA256_DIGEST_LENGTH> SHA256::generate_sha256(const std::string& passwd)
 {
     std::array<byte, SHA256_DIGEST_LENGTH> hash;
 
@@ -19,7 +20,7 @@ std::array<byte, SHA256_DIGEST_LENGTH> Encdec::SHA256::generate_sha256(const std
     return hash;
 }
 
-bool Encdec::SHA256::sha256_match(const std::string& passwd, std::array<byte, SHA256_DIGEST_LENGTH> hashpasswd)
+bool SHA256::sha256_match(const string& passwd, const array<byte, SHA256_DIGEST_LENGTH> &hashpasswd)
 {
     std::array<byte, SHA256_DIGEST_LENGTH> hash = generate_sha256(passwd);
 
@@ -30,3 +31,6 @@ bool Encdec::SHA256::sha256_match(const std::string& passwd, std::array<byte, SH
 
     return true;
 }
+
+} // NAMESPACE ENCDEC
+

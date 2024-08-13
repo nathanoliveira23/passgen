@@ -1,13 +1,9 @@
-#include <cstdint>
 #include <iostream>
 #include <cstdlib>
 #include <cctype>
 #include <cstdio>
 #include <string>
 #include <cstring>
-#include <stdexcept>
-#include <ios>
-#include <fstream>
 
 #include "../includes/options.hpp"
 
