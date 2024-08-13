@@ -1,12 +1,8 @@
-#include <cstddef>
 #include <fstream> 
-#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 #include <openssl/sha.h>
-#include <sstream>
 #include <array>
-#include <iomanip>
 #include <openssl/rand.h>
 #include <openssl/evp.h>
 
@@ -17,6 +13,8 @@ inline static void encdec_error(const std::string& error)
     std::cerr << "Error: " << error;
     std::abort();
 }
+
+namespace EncDec {
 
 bool EncDec::AES256::generate_private_Key(const std::string &userPassword)
 {
@@ -172,3 +170,6 @@ void EncDec::AES256::decrypt_file(const std::string &userPassphrase)
     pkfile.close();
     outfile.close();
 }
+
+} // NAMESPACE ENCDEC
+
